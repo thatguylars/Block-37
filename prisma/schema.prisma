@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  reviews   Review[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Item {
+  id          Int       @id @default(autoincrement())
+  name        String
+  imageUrl        String      @db.VarChar(255)
+  description String
+  reviews     Review[]
+  averageRating Float   @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  content   String
+  rating    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  item      Item     @relation(fields: [itemId], references: [id],onDelete: Cascade)
+  itemId    Int
+  comments  Comment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  review    Review?  @relation(fields: [reviewId], references: [id],onDelete: Cascade)
+  reviewId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
