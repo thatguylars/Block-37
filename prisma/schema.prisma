@@ -12,10 +12,12 @@ model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
   password  String
+  username  String    @unique
   reviews   Review[]
   comments  Comment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  @@index([email])
 }
 
 model Item {
@@ -27,6 +29,7 @@ model Item {
   averageRating Float   @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+    @@index([name])
 }
 
 model Review {
@@ -40,6 +43,9 @@ model Review {
   comments  Comment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([userId])  
+  @@index([itemId])  
+  @@index([userId, itemId]) 
 }
 
 model Comment {
@@ -51,4 +57,6 @@ model Comment {
   reviewId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([reviewId])
 }

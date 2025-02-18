@@ -1,7 +1,7 @@
+
 const { faker } = require("@faker-js/faker");
-const { prisma } = require("../db/common");
 require("dotenv").config();
-const { PrismaClient } = require("@prisma/client");
+const { prisma } = require("../db/common");
 
 async function seed() {
   console.log("Seeding the database...");
@@ -11,6 +11,7 @@ async function seed() {
       data: [...Array(10)].map(() => ({
         email: faker.internet.email(),
         password: faker.internet.password(),
+        username: faker.internet.username() + Math.floor(Math.random() * 1000),
       })),
     });
 

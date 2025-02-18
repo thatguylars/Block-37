@@ -50,14 +50,23 @@ CREATE TABLE "Comment" (
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "User_email_idx" ON "User"("email");
 
--- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "Item_name_idx" ON "Item"("name");
 
--- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "Review_userId_idx" ON "Review"("userId");
 
--- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "Review_itemId_idx" ON "Review"("itemId");
+
+-- CreateIndex
+CREATE INDEX "Review_userId_itemId_idx" ON "Review"("userId", "itemId");
+
+-- CreateIndex
+CREATE INDEX "Comment_userId_idx" ON "Comment"("userId");
+
+-- CreateIndex
+CREATE INDEX "Comment_reviewId_idx" ON "Comment"("reviewId");

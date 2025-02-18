@@ -1,4 +1,6 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
+
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -65,4 +67,4 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, isLoggedIn };

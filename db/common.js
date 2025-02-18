@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 
-let prisma; // Important: declare prisma outside the conditional
+let prisma; 
 
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();

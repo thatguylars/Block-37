@@ -1,27 +1,9 @@
-const router = require("express").Router();
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const JWT = process.env.JWT || "1234";
-const { prisma } = require("../db/common");
-const { getUserId } = require("../db/db");
+const express = require("express");
+const router = express.Router();
 
-const isLoggedIn = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
-  }
-  const token = authHeader.slice(7);
-  if (!token) return next();
-  try {
-    const { id } = jwt.verify(token, JWT);
-    console.log(id);
-    const user = await getUserId(id);
-    req.user = user;
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
+const { prisma } = require("../db/common");
+
+const { isLoggedIn } = require("./auth");
 
 // Get all items
 router.get("/", async (req, res, next) => {
@@ -39,6 +21,7 @@ router.get("/:id", async (req, res, next) => {
     const items = await prisma.items.findFirstOrThrow({
       where: {
         id: parseInt(req.params.id),
+        include: { reviews: true },
       },
     });
     res.send(items);
@@ -55,6 +38,7 @@ router.get("/:id/reviews", async (req, res, next) => {
         itemId: parseInt(req.params.id),
         review: req.body.review,
       },
+      include: { user: true },
     });
     res.send(reviews);
   } catch (error) {

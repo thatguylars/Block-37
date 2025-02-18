@@ -1,38 +1,39 @@
 const { prisma } = require("./common");
 const bcrypt = require("bcrypt");
 
+
 const createUser = async (username, password) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const response = await prisma.users.create({
+    const user = await prisma.users.create({
       data: {
         username,
         password: hashedPassword,
       },
     });
-    return response;
+    return user;
   } catch (error) {
     console.error(error);
   }
 };
 
 const getUser = async (username) => {
-  const response = await prisma.users.findFirstOrThrow({
+  const user = await prisma.users.findFirstOrThrow({
     where: {
       username,
     },
   });
-  return response;
+  return user;
 };
 
 const getUserId = async (id) => {
-  const response = await prisma.users.findFirstOrThrow({
+  const user = await prisma.users.findFirstOrThrow({
     where: {
-      id,
+      id: parseInt(id),
     },
   });
-  return response;
+  return user;
 };
 
 module.exports = { createUser, getUser, getUserId };
