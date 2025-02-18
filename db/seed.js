@@ -1,13 +1,13 @@
-
 const { faker } = require("@faker-js/faker");
 require("dotenv").config();
-const { prisma } = require("../db/common");
+const { getPrisma} = require("../db/common");
 
 async function seed() {
+  const prisma = await getPrisma();
   console.log("Seeding the database...");
 
   try {
-    const users = await prisma.User.createMany({
+    const users = await prisma.user.createMany({
       data: [...Array(10)].map(() => ({
         email: faker.internet.email(),
         password: faker.internet.password(),
@@ -17,7 +17,7 @@ async function seed() {
 
     console.log(`Created ${users.count} users.`);
 
-    const items = await prisma.Item.createMany({
+    const items = await prisma.item.createMany({
       data: [...Array(20)].map(() => ({
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
@@ -27,14 +27,14 @@ async function seed() {
 
     console.log(`Created ${items.count} items.`);
 
-    const userIds = await prisma.User.findMany({ select: { id: true } });
-    const itemIds = await prisma.Item.findMany({ select: { id: true } });
+    const userIds = await prisma.user.findMany({ select: { id: true } });
+    const itemIds = await prisma.item.findMany({ select: { id: true } });
 
     const reviews = await Promise.all(
       [...Array(10)].map(async (_, i) => {
         const userId = userIds[i % userIds.length].id;
         const itemId = itemIds[i % itemIds.length].id;
-        return prisma.Review.create({
+        return prisma.review.create({
           data: {
             content: faker.lorem.paragraph(2),
             rating: faker.number.int({ min: 1, max: 5 }),
@@ -52,7 +52,7 @@ async function seed() {
         const userId = userIds[i % userIds.length].id;
         const reviewId = reviews[i % reviews.length].id;
 
-        return prisma.Comment.create({
+        return prisma.comment.create({
           data: {
             content: faker.lorem.paragraph(2),
             userId: userId,

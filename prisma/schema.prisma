@@ -8,39 +8,39 @@ datasource db {
   relationMode = "prisma"
 }
 
-model User {
+model user {
   id        Int       @id @default(autoincrement())
   email     String    @unique
   password  String
   username  String    @unique
-  reviews   Review[]
-  comments  Comment[]
+  reviews   review[]
+  comments  comment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   @@index([email])
 }
 
-model Item {
+model item {
   id          Int       @id @default(autoincrement())
   name        String
   imageUrl        String      @db.VarChar(255)
   description String
-  reviews     Review[]
+  reviews     review[]
   averageRating Float   @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
     @@index([name])
 }
 
-model Review {
+model review {
   id        Int      @id @default(autoincrement())
   content   String
   rating    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  item      Item     @relation(fields: [itemId], references: [id],onDelete: Cascade)
+  item      item     @relation(fields: [itemId], references: [id],onDelete: Cascade)
   itemId    Int
-  comments  Comment[]
+  comments  comment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([userId])  
@@ -48,12 +48,12 @@ model Review {
   @@index([userId, itemId]) 
 }
 
-model Comment {
+model comment {
   id        Int      @id @default(autoincrement())
   content   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  review    Review?  @relation(fields: [reviewId], references: [id],onDelete: Cascade)
+  review    review?  @relation(fields: [reviewId], references: [id],onDelete: Cascade)
   reviewId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

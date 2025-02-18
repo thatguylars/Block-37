@@ -1,12 +1,4 @@
-// const app = require("./app"); 
-// require("dotenv").config();
 
-// const PORT = process.env.PORT || 3000;
-
-// app.listen(PORT, async () => {
-//   console.log(`I am listening on port number ${PORT}`);
-// });
-// index.js (Main server file)
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -18,9 +10,9 @@ require("dotenv").config(); // Load environment variables
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(morgan("dev")); // Logging middleware
-app.use(express.json()); // Body parsing middleware
+app.use(cors()); 
+app.use(morgan("dev")); 
+app.use(express.json()); 
 
 // Routes
 app.get("/", (req, res) => {
@@ -31,7 +23,13 @@ app.use("/api", routes); // Mount your API routes
 
 // Error handling middleware (Improved)
 app.use((err, req, res, next) => {
+  console.error("Error on request:", req.method, req.originalUrl);
   console.error(err);
+   if (req.user) {
+     // Example: Check if a user is logged in (if applicable)
+     console.error("User:", req.user);
+   }
+
   if (process.env.NODE_ENV === 'development') {
     res.status(500).json({ error: err.message, stack: err.stack });
   } else {

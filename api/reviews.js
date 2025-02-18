@@ -8,45 +8,62 @@ const {isLoggedIn} = require("./auth");
 // Get comments made by user
 router.get("/me", isLoggedIn, async (req, res, next) => {
   try {
-    const reviews = await prisma.reviews.findMany({
+    const review = await prisma.review.findMany({
       where: {
         userId: parseInt(req.user.id),
-        review: req.body.review,
+        ...(req.query.review && { content: { contains: req.query.review } }),
       },
     });
-    res.send(reviews);
+    res.send(review);
   } catch (error) {
     next(error);
   }
 });
-
-//Update users review
-router.put("/:id", isLoggedIn, async (req, res, next) => {
+// Create a review
+router.post("/:id/reviews", isLoggedIn, async (req, res, next) => {
   try {
-    const reviews = await prisma.reviews.update({
+    const review = await prisma.review.create({
+      data: {
+        user: { connect: { id: parseInt(req.user.id) } },
+        item: { connect: { id: parseInt(req.params.id) } },
+        review: req.body.review,
+        rating: parseInt(req.body.rating),
+      },
+    });
+
+    res.status(201).send(review);
+  } catch (error) {
+    next(error);
+  }
+});
+router.put("/:reviewId", isLoggedIn, async (req, res, next) => {
+  try {
+    const review = await prisma.review.update({
       where: {
-        id: parseInt(req.params.id),
+        id: parseInt(req.params.reviewId), // Use :reviewId
+        userId: parseInt(req.user.id), // Add userId to where clause for security
       },
       data: {
         review: req.body.review,
         rating: parseInt(req.body.rating),
       },
     });
-    res.send(reviews);
+    res.send(review);
   } catch (error) {
     next(error);
   }
 });
 
-//Delete users review
-router.delete("/:id", isLoggedIn, async (req, res, next) => {
+router.delete("/:reviewId", isLoggedIn, async (req, res, next) => {
+  // :reviewId
   try {
-    const reviews = await prisma.reviews.delete({
+    const review = await prisma.review.delete({
       where: {
-        id: parseInt(req.params.id),
+        id: parseInt(req.params.reviewId), // Use :reviewId
+        userId: parseInt(req.user.id), // Add userId to where clause for security
       },
     });
-    res.status(204).send(reviews);
+    res.status(204).send(review);
   } catch (error) {
     next(error);
   }

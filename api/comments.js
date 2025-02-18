@@ -9,13 +9,13 @@ const { isLoggedIn } = require("./auth");
 // Get comments made by user
 router.get("/me", isLoggedIn, async (req, res, next) => {
   try {
-    const comments = await prisma.comments.findMany({
+    const comment = await prisma.comment.findMany({
       where: {
         userId: parseInt(req.user.id),
         comment: req.body.comment,
       },
     });
-    res.send(comments);
+    res.send(comment);
   } catch (error) {
     next(error);
   }
@@ -23,17 +23,18 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 
 // Update user review
 
-router.put("/:id", isLoggedIn, async (req, res, next) => {
+router.put("/:commentId", isLoggedIn, async (req, res, next) => {
   try {
-    const comments = await prisma.comments.update({
+    const comment = await prisma.comment.update({
       where: {
         id: parseInt(req.params.id),
+        userId: parseInt(req.user.id),
       },
       data: {
         comment: req.body.comment,
       },
     });
-    res.send(comments);
+    res.send(comment);
   } catch (error) {
     next(error);
   }
@@ -41,14 +42,15 @@ router.put("/:id", isLoggedIn, async (req, res, next) => {
 
 // Delete user comment
 
-router.delete("/:id", isLoggedIn, async (req, res, next) => {
+router.delete("/:commentId", isLoggedIn, async (req, res, next) => {
   try {
-    const comments = await prisma.comments.delete({
+    const comment = await prisma.Comment.delete({
       where: {
         id: parseInt(req.params.id),
+        userId: parseInt(req.user.id),
       },
     });
-    res.send(comments);
+    res.send(comment);
   } catch (error) {
     next(error);
   }
